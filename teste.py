@@ -2,12 +2,12 @@ import sqlite3
 import requests
 import time
 import os
-
+#oooooooo
 # --- CONFIGURAÇÃO ---
 # MUITO IMPORTANTE: Altere este URL para o endereço IP e porta
 # onde o seu dump1090 está a fornecer o ficheiro aircraft.json.
 # Se o dump1090 estiver a correr no mesmo contentor, pode ser 'http://127.0.0.1/dump1090/data/aircraft.json'
-# ou 'http://127.0.0.1:8080/data/aircraft.json'.
+# ou 'http://127.0.0.1:8080/Sdata/aircraft.json'.
 # O caminho '/data/aircraft.json' é o standard nas versões mais recentes.
 URL_DUMP1090 = "http://SEU_IP_AQUI/dump1090/data/aircraft.json"
 
