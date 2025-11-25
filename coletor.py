@@ -1,30 +1,23 @@
 import sqlite3
 import requests
 import time
-import datetime
+from datetime import datetime
 
-
-URL_DUMP1090 = "http://localhost:8080/data/aircraft.json"
-
-# Nome da base de dados (será criada na mesma pasta)
+# --- CONFIGURAÇÃO ---
+# URL da fonte oficial externa (substitui o simulador local)
+# O ficheiro JSON costuma estar em /data/aircraft.json relativo à pasta do mapa
+URL_DUMP1090 = "https://ads-b.jcboliveira.xyz/dump1090/data/aircraft.json"
 DB_NAME = "radar_data.sqlite"
-
-# Intervalo de recolha em segundos
-INTERVALO = 10
+INTERVALO = 10 # Tempo em segundos entre recolhas
 
 def criar_tabela():
-    """
-    Cria a base de dados e a tabela se não existirem.
-    """
+    """Cria a tabela na base de dados se não existir."""
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
-    
-    # Criar tabela 'aeronaves'
-    # Guardamos também o 'timestamp' para saber QUANDO a aeronave estava naquela posição
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS aeronaves (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        timestamp_recolha DATETIME DEFAULT CURRENT_TIMESTAMP,
+        timestamp_recolha DATETIME,
         hex TEXT,
         flight TEXT,
         lat REAL,
@@ -34,31 +27,44 @@ def criar_tabela():
         track REAL
     )
     ''')
-    
     conn.commit()
     conn.close()
-    print("Base de dados verificada/criada com sucesso.")
+    print("Base de dados pronta.")
 
 def obter_dados():
-    """
-    Vai buscar o JSON ao dump1090.
-    """
+    """Faz o pedido HTTP ao site externo."""
     try:
-        print(f"A conectar a {URL_DUMP1090}...")
-        resposta = requests.get(URL_DUMP1090, timeout=5)
+        print(f"A ler dados de {URL_DUMP1090}...")
+        
+        # Alguns servidores bloqueiam scripts Python. 
+        # Usamos um 'User-Agent' para fingir que somos um browser normal.
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        }
+        
+        resposta = requests.get(URL_DUMP1090, headers=headers, timeout=10)
+        
         if resposta.status_code == 200:
             return resposta.json()
         else:
             print(f"Erro no pedido: {resposta.status_code}")
             return None
+            
     except Exception as e:
         print(f"Erro de conexão: {e}")
-        return None
+    return None
+
+def tratar_altitude(alt_cru):
+    """Converte 'ground' para 0 e garante que é número."""
+    if alt_cru == "ground":
+        return 0
+    try:
+        return int(alt_cru)
+    except:
+        return 0
 
 def guardar_dados(dados_json):
-    """
-    Recebe o JSON e guarda as aeronaves na BD.
-    """
+    """Guarda os aviões na BD com o mesmo carimbo temporal."""
     if not dados_json or 'aircraft' not in dados_json:
         return
 
@@ -66,43 +72,44 @@ def guardar_dados(dados_json):
     cursor = conn.cursor()
     
     lista_aeronaves = dados_json['aircraft']
+    
+    # TIMESTAMP ÚNICO: Todos os aviões deste ciclo ficam com a mesma hora exata
+    agora = datetime.now() 
+    
     contador = 0
 
     for aviao in lista_aeronaves:
-        # Só guardamos se tiver coordenadas (lat/lon) válidas
+        # Só guardamos se tiver coordenadas válidas
         if 'lat' in aviao and 'lon' in aviao:
+            
             hex_code = aviao.get('hex')
-            flight = aviao.get('flight', '').strip() # remove espaços extra
+            flight = aviao.get('flight', 'N/A').strip() 
             lat = aviao.get('lat')
             lon = aviao.get('lon')
-            alt = aviao.get('alt_baro', 0) # altitude barométrica
-            gs = aviao.get('gs', 0)        # ground speed
-            track = aviao.get('track', 0)  # rumo
+            alt = tratar_altitude(aviao.get('altitude', 0))
+            velocidade = aviao.get('speed', 0)
+            track = aviao.get('track', 0)
 
             cursor.execute('''
-            INSERT INTO aeronaves (hex, flight, lat, lon, altitude, velocidade, track)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            ''', (hex_code, flight, lat, lon, alt, gs, track))
+            INSERT INTO aeronaves (timestamp_recolha, hex, flight, lat, lon, altitude, velocidade, track)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (agora, hex_code, flight, lat, lon, alt, velocidade, track))
             
             contador += 1
 
     conn.commit()
     conn.close()
-    print(f"--> Guardados {contador} registos na base de dados.")
+    print(f"--> Sincronizado: Guardados {contador} aviões reais às {agora.strftime('%H:%M:%S')}.")
 
 def main():
-    """
-    Função Principal
-    """
-    print("--- INICIANDO COLETOR SWAR ---")
+    print(f"--- COLETOR ONLINE INICIADO ({URL_DUMP1090}) ---")
     criar_tabela()
-    
     while True:
         dados = obter_dados()
         if dados:
             guardar_dados(dados)
         
-        print(f"A aguardar {INTERVALO} segundos...")
+        # Aguarda X segundos até à próxima atualização
         time.sleep(INTERVALO)
 
 if __name__ == "__main__":
