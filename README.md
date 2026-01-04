@@ -102,3 +102,24 @@ A obstrução da Zona de Fresnel (o volume elipsoidal entre emissor e recetor) p
 * **Mapas:** Folium / Leaflet.js / OpenStreetMap
 * **Base de Dados:** SQLite
 * **Infraestrutura:** Proxmox VE (LXC Debian 12)
+
+## Diagrama de Funcionamento
+
+graph LR
+    subgraph "Fonte de Dados"
+        A[External Source<br>dump1090] -- JSON / HTTP --> B
+    end
+
+    subgraph "Servidor Debian (Backend)"
+        B[Coletor Python<br>coletor.py] -- "Trata e Grava" --> C[(Base de Dados<br>SQLite)]
+        C -- "Lê Dados" --> D[Servidor Web<br>app.py]
+    end
+
+    subgraph "Frontend (Utilizador)"
+        D -- "HTML + Mapas" --> E[Browser<br>Chrome/Edge]
+        E -- "Filtros (GET)" --> D
+    end
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style C fill:#ff9,stroke:#333,stroke-width:2px
+    style E fill:#9f9,stroke:#333,stroke-width:2px
