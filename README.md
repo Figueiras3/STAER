@@ -105,21 +105,11 @@ A obstrução da Zona de Fresnel (o volume elipsoidal entre emissor e recetor) p
 
 ## Diagrama de Funcionamento
 
+```mermaid
+```mermaid
 graph LR
-    subgraph "Fonte de Dados"
-        A[External Source<br>dump1090] -- JSON / HTTP --> B
-    end
-
-    subgraph "Servidor Debian (Backend)"
-        B[Coletor Python<br>coletor.py] -- "Trata e Grava" --> C[(Base de Dados<br>SQLite)]
-        C -- "Lê Dados" --> D[Servidor Web<br>app.py]
-    end
-
-    subgraph "Frontend (Utilizador)"
-        D -- "HTML + Mapas" --> E[Browser<br>Chrome/Edge]
-        E -- "Filtros (GET)" --> D
-    end
-
-    style A fill:#f9f,stroke:#333,stroke-width:2px
-    style C fill:#ff9,stroke:#333,stroke-width:2px
-    style E fill:#9f9,stroke:#333,stroke-width:2px
+    A[Internet: dump1090] -->|JSON| B(coletor.py)
+    B -->|Grava| C[(Base de Dados)]
+    C -->|Lê| D(app.py)
+    D -->|HTML| E[Browser Utilizador]
+    E -->|Filtros| D
