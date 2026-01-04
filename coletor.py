@@ -3,12 +3,10 @@ import requests
 import time
 from datetime import datetime
 
-# --- CONFIGURAÇÃO ---
-# URL da fonte oficial externa (substitui o simulador local)
-# O ficheiro JSON costuma estar em /data/aircraft.json relativo à pasta do mapa
 URL_DUMP1090 = "https://ads-b.jcboliveira.xyz/dump1090/data/aircraft.json"
+
 DB_NAME = "radar_data.sqlite"
-INTERVALO = 10 # Tempo em segundos entre recolhas
+INTERVALO = 10 
 
 def criar_tabela():
     """Cria a tabela na base de dados se não existir."""
@@ -36,8 +34,6 @@ def obter_dados():
     try:
         print(f"A ler dados de {URL_DUMP1090}...")
         
-        # Alguns servidores bloqueiam scripts Python. 
-        # Usamos um 'User-Agent' para fingir que somos um browser normal.
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
         }
@@ -73,13 +69,11 @@ def guardar_dados(dados_json):
     
     lista_aeronaves = dados_json['aircraft']
     
-    # TIMESTAMP ÚNICO: Todos os aviões deste ciclo ficam com a mesma hora exata
     agora = datetime.now() 
     
     contador = 0
 
     for aviao in lista_aeronaves:
-        # Só guardamos se tiver coordenadas válidas
         if 'lat' in aviao and 'lon' in aviao:
             
             hex_code = aviao.get('hex')
@@ -109,7 +103,6 @@ def main():
         if dados:
             guardar_dados(dados)
         
-        # Aguarda X segundos até à próxima atualização
         time.sleep(INTERVALO)
 
 if __name__ == "__main__":
