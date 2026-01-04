@@ -2,7 +2,7 @@
 
 Este projeto foi desenvolvido no âmbito da unidade curricular de STAER. O objetivo é a criação de um sistema capaz de recolher, tratar, armazenar e visualizar informação de tráfego aéreo proveniente de radares secundários (SSR) e receptores ADS-B (Modo S).
 
-## 🚀 Funcionalidades
+## Funcionalidades
 
 * **Recolha de Dados:** Script automático que consome dados JSON de fontes `dump1090`.
 * **Persistência:** Armazenamento histórico em base de dados SQLite.
@@ -12,7 +12,7 @@ Este projeto foi desenvolvido no âmbito da unidade curricular de STAER. O objet
 
 ---
 
-## 🛠️ Instalação e Execução
+## Instalação e Execução
 
 Este projeto foi desenhado para correr em ambiente Linux (Debian/Ubuntu), idealmente num contentor **Proxmox**.
 
@@ -55,7 +55,7 @@ Abrir o browser no computador e aceder ao IP do servidor na porta 5000:
 
 ---
 
-## 📐 Arquitetura do Sistema
+## Arquitetura do Sistema
 
 O sistema segue uma arquitetura modular dividida em Recolha, Armazenamento e Visualização.
 
@@ -80,7 +80,7 @@ O sistema segue uma arquitetura modular dividida em Recolha, Armazenamento e Vis
 
 ---
 
-## 📡 Análise de Propagação de Sinal (Pormenores Construtivos)
+## Análise de Propagação de Sinal (Pormenores Construtivos)
 
 No âmbito do estudo de radares secundários (1090 MHz), a propagação do sinal comporta-se predominantemente em "linha de vista" (*Line of Sight*). A infraestrutura de receção deve ter em conta os seguintes fatores:
 
@@ -95,7 +95,7 @@ A obstrução da Zona de Fresnel (o volume elipsoidal entre emissor e recetor) p
 
 ---
 
-## 👨‍💻 Tecnologias Usadas
+## Tecnologias Usadas
 
 * **Linguagem:** Python 3
 * **Web Framework:** Flask
