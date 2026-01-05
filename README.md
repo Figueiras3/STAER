@@ -150,23 +150,24 @@ erDiagram
 ```
 ## Use Case Diagram 
 
-RADAR STAER
-                   +-----------------------------+
-                   |                             |
-   Utilizador      |  (Visualizar Mapa)          |
-   Final           |                             |
-      O  --------->|  (Filtrar Zona Porto)       |
-     /|\           |                             |
-     / \           |  (Filtrar Solo/Voo)         |
-                   |                             |
-                   |                             |      Coletor
-                   |  (Recolher Dados) <---------|    (Automático)
-                   |          |                  |         O
-                   |          | include          |        /|\
-                   |          v                  |        / \
-                   |  (Gravar na BD)             |
-                   |                             |
-                   +-----------------------------+
+usecaseDiagram
+    actor Utilizador
+    actor Coletor
+
+    package Sistema_STAER {
+        usecase "Visualizar Mapa" as UC1
+        usecase "Filtrar Zona (Porto)" as UC2
+        usecase "Filtrar Altitude" as UC3
+        usecase "Recolher Dados" as UC4
+        usecase "Gravar Base de Dados" as UC5
+    }
+
+    Utilizador --> UC1
+    Utilizador --> UC2
+    Utilizador --> UC3
+
+    Coletor --> UC4
+    UC4 ..> UC5 : include
 ```
 
 
