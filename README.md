@@ -130,12 +130,9 @@ A obstrução da Zona de Fresnel (o volume elipsoidal entre emissor e recetor) p
 
 
 ```
-## 📊 Modelagem do Sistema
-
-Para complementar a arquitetura, apresentam-se os modelos de dados e de interação do sistema.
+##  Modelagem do Sistema
 
 ### Modelo de Dados (Entidade-Relacionamento)
-Este diagrama representa a estrutura da tabela `aeronaves` na base de dados SQLite, essencial para a persistência histórica dos dados.
 
 ```mermaid
 erDiagram
@@ -151,26 +148,25 @@ erDiagram
         REAL track "Rumo em graus"
     }
 ```
-usecaseDiagram
-    actor "Utilizador Final" as User
-    actor "Coletor (Automático)" as Bot
+## Use Case Diagram 
 
-    package "Sistema STAER" {
-        usecase "Visualizar Mapa em Tempo Real" as UC1
-        usecase "Filtrar por Zona (Porto)" as UC2
-        usecase "Filtrar por Altitude (Solo/Voo)" as UC3
-        
-        usecase "Recolher Dados Externos" as UC5
-        usecase "Gravar em Base de Dados" as UC6
-    }
-
-    User --> UC1
-    User --> UC2
-    User --> UC3
-
-    Bot --> UC5
-    UC5 ..> UC6 : include
-
+RADAR STAER
+                   +-----------------------------+
+                   |                             |
+   Utilizador      |  (Visualizar Mapa)          |
+   Final           |                             |
+      O  --------->|  (Filtrar Zona Porto)       |
+     /|\           |                             |
+     / \           |  (Filtrar Solo/Voo)         |
+                   |                             |
+                   |                             |      Coletor
+                   |  (Recolher Dados) <---------|    (Automático)
+                   |          |                  |         O
+                   |          | include          |        /|\
+                   |          v                  |        / \
+                   |  (Gravar na BD)             |
+                   |                             |
+                   +-----------------------------+
 ```
 
 
