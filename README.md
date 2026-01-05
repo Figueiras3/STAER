@@ -151,3 +151,26 @@ erDiagram
         REAL track "Rumo em graus"
     }
 ```
+usecaseDiagram
+    actor "Utilizador Final" as User
+    actor "Coletor (Automático)" as Bot
+
+    package "Sistema STAER" {
+        usecase "Visualizar Mapa em Tempo Real" as UC1
+        usecase "Filtrar por Zona (Porto)" as UC2
+        usecase "Filtrar por Altitude (Solo/Voo)" as UC3
+        
+        usecase "Recolher Dados Externos" as UC5
+        usecase "Gravar em Base de Dados" as UC6
+    }
+
+    User --> UC1
+    User --> UC2
+    User --> UC3
+
+    Bot --> UC5
+    UC5 ..> UC6 : include
+
+```
+
+
