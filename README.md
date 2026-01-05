@@ -127,3 +127,19 @@ A obstrução da Zona de Fresnel (o volume elipsoidal entre emissor e recetor) p
                                 |  (Servidor Web) |
                                 |                 |
                                 +-----------------+
+
+
+## Modelagem do Sistema
+
+erDiagram
+    AERONAVES {
+        INTEGER id PK "Identificador Único"
+        DATETIME timestamp_recolha "Hora da captura (Sincronia)"
+        TEXT hex "Código ICAO (Ex: 4CA2A1)"
+        TEXT flight "Callsign (Ex: TAP123)"
+        REAL lat "Latitude"
+        REAL lon "Longitude"
+        INTEGER altitude "Altitude em pés"
+        REAL velocidade "Velocidade em nós"
+        REAL track "Rumo em graus"
+    }
