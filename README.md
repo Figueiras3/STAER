@@ -129,8 +129,15 @@ A obstrução da Zona de Fresnel (o volume elipsoidal entre emissor e recetor) p
                                 +-----------------+
 
 
-## Modelagem do Sistema
+```
+## 📊 Modelagem do Sistema
 
+Para complementar a arquitetura, apresentam-se os modelos de dados e de interação do sistema.
+
+### Modelo de Dados (Entidade-Relacionamento)
+Este diagrama representa a estrutura da tabela `aeronaves` na base de dados SQLite, essencial para a persistência histórica dos dados.
+
+```mermaid
 erDiagram
     AERONAVES {
         INTEGER id PK "Identificador Único"
@@ -143,3 +150,4 @@ erDiagram
         REAL velocidade "Velocidade em nós"
         REAL track "Rumo em graus"
     }
+```
